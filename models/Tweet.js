@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const TwittSchema = Schema({
+const TweetSchema = Schema({
 
     text: {
         type: String,
@@ -26,7 +26,7 @@ const TwittSchema = Schema({
             ref: 'UsuarioTwitter'
         }
     ],
-    retwitts: [
+    retweets: [
         {
             type: Schema.Types.ObjectId,
             ref: 'UsuarioTwitter'
@@ -40,13 +40,13 @@ const TwittSchema = Schema({
     ],
 });
 
-TwittSchema.plugin(mongoosePaginate);
+TweetSchema.plugin(mongoosePaginate);
 
 //Renombrar _id
-TwittSchema.method('toJSON', function () {
+TweetSchema.method('toJSON', function () {
     const {__v, _id, ...object} = this.toObject();
     object.id = _id;
     return object;
 });
 
-module.exports = model( 'Twitt', TwittSchema );
+module.exports = model( 'Tweet', TweetSchema );

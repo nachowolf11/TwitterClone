@@ -3,24 +3,24 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 
-const { getTwitts, createTwitt, addLike, addRetwitt, deleteTwitt } = require('../controllers/twitt')
+const { getTweets, createTweet, addLike, deleteTweet, addRetweet } = require('../controllers/tweet')
 
 const router = Router();
 
 
-// Obtener Twitts
-router.get('/', getTwitts)
+// Obtener Tweets
+router.get('/', getTweets)
 
-// Crear Twitt
-router.post('/', validarJWT, createTwitt)
+// Crear Tweet
+router.post('/', validarJWT, createTweet)
 
-// Eliminar Twitt
-router.delete('/', validarJWT, deleteTwitt)
+// Eliminar Tweet
+router.delete('/', validarJWT, deleteTweet)
 
 // Likes
 router.put('/like', validarJWT, addLike)
 
-// Retwitts
-router.put('/retwitt', validarJWT, addRetwitt)
+// Retweets
+router.put('/retweet', validarJWT, addRetweet)
 
 module.exports = router

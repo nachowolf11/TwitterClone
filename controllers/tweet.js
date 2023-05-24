@@ -1,16 +1,16 @@
 const express = require('express');
-const Twitt = require('../models/Twitt');
+const Tweet = require('../models/Tweet');
 const { generarJWT } = require('../helpers/jwt');
 
-const getTwitts = async ( req, res = express.response ) => {
+const getTweets = async ( req, res = express.response ) => {
     const options = { limit: req.query.limit, page: req.query.page }
     console.log(options);
 
     try {
-        Twitt.paginate({}, options, (err, twitts) => {
+        Tweet.paginate({}, options, (err, tweets) => {
             res.status(200).json({
                 ok: true,
-                twitts
+                tweets
             });
         })
 
@@ -23,18 +23,18 @@ const getTwitts = async ( req, res = express.response ) => {
     }
 }
 
-const createTwitt = async( req, res = express.response ) => {
+const createTweet = async( req, res = express.response ) => {
 
-    const twitt = new Twitt( req.body )
+    const tweet = new Tweet( req.body )
 
     try {
-        twitt.user = req.uid // Mediante el la validacion del token se asigna el UID al req
-        twitt.creationDate = Date.now();
-        const twittSaved = await twitt.save();
+        tweet.user = req.uid // Mediante el la validacion del token se asigna el UID al req
+        tweet.creationDate = Date.now();
+        const tweetSaved = await tweet.save();
 
         res.status(201).json({
             ok: true,
-            twitt: twittSaved
+            tweet: tweetSaved
         });
     } catch (error) {
         console.log(error);
@@ -45,31 +45,31 @@ const createTwitt = async( req, res = express.response ) => {
     }
 }
 
-const deleteTwitt = async( req, res = express.response ) => {
-    const twittID = req.body.twittID
+const deleteTweet = async( req, res = express.response ) => {
+    const tweetID = req.body.tweetID
 
     try {
-        const twitt = await Twitt.findById( twittID );
+        const tweet = await Tweet.findById( tweetID );
         
-        if( !twitt ){
+        if( !tweet ){
             res.status(400).json({
                 ok:false,
-                msg:`Twitt (${ req.uid }) does not exist.`
+                msg:`Tweet (${ req.uid }) does not exist.`
             });
         }
 
-        if( twitt.user !=  req.uid){
+        if( tweet.user !=  req.uid){
             res.status(403).json({
                 ok:false,
-                msg:`This Twitt does not belong to the user ${ req.uid }.`
+                msg:`This Tweet does not belong to the user ${ req.uid }.`
             });
         }
 
-        await Twitt.findByIdAndDelete( twittID );
+        await Tweet.findByIdAndDelete( tweetID );
 
         res.status(200).json({
             ok: true,
-            deletedTwitt: twitt
+            deletedTweet: tweet
         });
     } catch (error) {
         console.log(error);
@@ -81,18 +81,18 @@ const deleteTwitt = async( req, res = express.response ) => {
 }
 
 const addLike = async( req, res = express.response ) => {
-    const twittID = req.body.twittID
+    const tweetID = req.body.tweetID
     const uid = req.uid
 
     try {
-        const twitt = await Twitt.findById( twittID );
+        const tweet = await Tweet.findById( tweetID );
 
-        if( twitt.likes.find( user => user == uid ) ){
-            twitt.likes = twitt.likes.filter( user => user != uid );
+        if( tweet.likes.find( user => user == uid ) ){
+            tweet.likes = tweet.likes.filter( user => user != uid );
         }else{
-            twitt.likes.push( uid );
+            tweet.likes.push( uid );
         }
-        await Twitt.findByIdAndUpdate( twittID, twitt );
+        await Tweet.findByIdAndUpdate( tweetID, tweet );
 
         res.status(201).json({
             ok: true
@@ -106,19 +106,19 @@ const addLike = async( req, res = express.response ) => {
     }
 }
 
-const addRetwitt = async( req, res = express.response ) => {
-    const twittID = req.body.twittID
+const addRetweet = async( req, res = express.response ) => {
+    const tweetID = req.body.tweetID
     const uid = req.uid
 
     try {
-        const twitt = await Twitt.findById( twittID );
+        const tweet = await Tweet.findById( tweetID );
 
-        if( twitt.retwitts.find( user => user == uid ) ){
-            twitt.retwitts = twitt.retwitts.filter( user => user != uid );
+        if( tweet.retweets.find( user => user == uid ) ){
+            tweet.retweets = tweet.retweets.filter( user => user != uid );
         }else{
-            twitt.retwitts.push( uid );
+            tweet.retweets.push( uid );
         }
-        await Twitt.findByIdAndUpdate( twittID, twitt );
+        await Tweet.findByIdAndUpdate( tweetID, tweet );
 
         res.status(201).json({
             ok: true
@@ -133,9 +133,9 @@ const addRetwitt = async( req, res = express.response ) => {
 }
 
 module.exports = {
-    createTwitt,
-    getTwitts,
-    deleteTwitt,
+    createTweet,
+    getTweets,
+    deleteTweet,
     addLike,
-    addRetwitt,
+    addRetweet,
 }

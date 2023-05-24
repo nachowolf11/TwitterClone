@@ -20,7 +20,7 @@ app.use( express.json() );
 
 //Rutas
 app.use('/auth', require('./routes/auth'));
-app.use('/twitt', require('./routes/twitt'));
+app.use('/tweet', require('./routes/tweet'));
 
 //Escuchar peticions
 app.listen( process.env.PORT, () => {

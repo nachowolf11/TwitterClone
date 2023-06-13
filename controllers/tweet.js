@@ -3,8 +3,12 @@ const Tweet = require('../models/Tweet');
 const { generarJWT } = require('../helpers/jwt');
 
 const getTweets = async ( req, res = express.response ) => {
-    const options = { limit: req.query.limit, page: req.query.page }
-    console.log(options);
+    const options = { 
+        limit: req.query.limit,
+        page: req.query.page,
+        populate: {path:'user', select:'name username profilePicture'}
+    }
+
 
     try {
         Tweet.paginate({}, options, (err, tweets) => {

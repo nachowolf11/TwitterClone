@@ -26,12 +26,13 @@ const crearUsuario = async(req, res = express.response) => {
         await usuario.save();
 
         //Generar JWT
-        const token = await generarJWT( usuario.id, usuario.name );
+        const token = await generarJWT( usuario.id, usuario.name, usuario.username );
     
         res.status(201).json({
             ok: true,
             uid: usuario.id,
             name: usuario.name,
+            username: usuario.username,
             token
         })
     } catch (error) {
@@ -45,15 +46,19 @@ const crearUsuario = async(req, res = express.response) => {
 
 const loginUsuario = async(req, res = express.response) => {
     
-    const { email, password } = req.body
+    const { principal, password } = req.body
 
     try {
-        let usuario = await UsuarioTwitter.findOne({ email })
+        let usuario = await UsuarioTwitter.findOne({ email: principal })
+
+        if( !usuario ){
+            usuario = await UsuarioTwitter.findOne({ username: principal })
+        }
         
         if( !usuario ){
             return res.status(400).json({
                 ok: false,
-                msg: 'El usuario no existe con ese email'
+                msg: 'User does not exist.'
             });
         }
 
@@ -61,17 +66,18 @@ const loginUsuario = async(req, res = express.response) => {
         if( !validPassword ){
             return res.status(400).json({
                 ok: false,
-                msg: 'Password incorrecto'
+                msg: 'Password error'
             });
         }
 
         //Generar JWT
-        const token = await generarJWT( usuario.id, usuario.name );
+        const token = await generarJWT( usuario.id, usuario.name, usuario.username );
 
         res.status(200).json({
             ok: true,
             uid: usuario.id,
             name: usuario.name,
+            username: usuario.username,
             token
         });
 
@@ -86,13 +92,13 @@ const loginUsuario = async(req, res = express.response) => {
 
 const revalidarToken = async(req, res = express.response) => {
 
-    const { uid, name } = req
+    const { uid, name, username } = req
 
-    const token = await generarJWT( uid, name );
+    const token = await generarJWT( uid, name, username );
 
     res.json({
         ok: true,
-        uid, name,
+        uid, name, username,
         token
     })
 }

@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const UsuarioTwitter = require('../models/UsuarioTwitter');
 const { generarJWT } = require('../helpers/jwt');
+const moment = require('moment/moment');
 
 const crearUsuario = async(req, res = express.response) => {
 

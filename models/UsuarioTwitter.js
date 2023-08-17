@@ -25,8 +25,7 @@ const UsuarioTwitterSchema = Schema({
         required: true
     },
     profilePicture: {
-        data: Buffer,
-        contentType: String,
+        type: String,
     },
     following:[
         {
@@ -48,14 +47,11 @@ const UsuarioTwitterSchema = Schema({
     password:{
         type: String,
         required: true
-    }
-});
-
-//Renombrar _id
-UsuarioTwitterSchema.method('toJSON', function () {
-    const {__v, _id, ...object} = this.toObject();
-    object.id = _id;
-    return object;
+    },
+    creationDate: {
+        type: Date,
+        required: true
+    },
 });
 
 module.exports = model( 'UsuarioTwitter', UsuarioTwitterSchema );

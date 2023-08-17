@@ -22,17 +22,24 @@ const crearUsuario = async(req, res = express.response) => {
         //Encriptar contraseña
         const salt = bcrypt.genSaltSync(10);
         usuario.password = bcrypt.hashSync( password, salt );
-    
-        await usuario.save();
 
-        //Generar JWT
-        const token = await generarJWT( usuario.id, usuario.name, usuario.username );
+        // Agrego imagen genérica
+        usuario.profilePicture = 'https://res.cloudinary.com/dypapdpir/image/upload/v1687455878/perfilgenerica_uxqymt.png'
+        
+        usuario.creationDate = moment.utc();
     
+        usuario = await usuario.save();
+
+        
+        //Generar JWT
+        const token = await generarJWT( usuario._id, usuario.name, usuario.username );
+        
+        let userData = usuario.toObject()
+        delete userData.password
+
         res.status(201).json({
             ok: true,
-            uid: usuario.id,
-            name: usuario.name,
-            username: usuario.username,
+            userData,
             token
         })
     } catch (error) {
@@ -71,13 +78,16 @@ const loginUsuario = async(req, res = express.response) => {
         }
 
         //Generar JWT
-        const token = await generarJWT( usuario.id, usuario.name, usuario.username );
+        const token = await generarJWT( usuario._id, usuario.name, usuario.username );
 
+        usuario = await UsuarioTwitter.findById(usuario._id)
+
+        let userData = usuario.toObject()
+        delete userData.password
+        
         res.status(200).json({
             ok: true,
-            uid: usuario.id,
-            name: usuario.name,
-            username: usuario.username,
+            userData,
             token
         });
 
@@ -96,9 +106,13 @@ const revalidarToken = async(req, res = express.response) => {
 
     const token = await generarJWT( uid, name, username );
 
+    const usuario = await UsuarioTwitter.findById(uid)
+    let userData = usuario.toObject()
+    delete userData.password
+
     res.json({
         ok: true,
-        uid, name, username,
+        userData,
         token
     })
 }

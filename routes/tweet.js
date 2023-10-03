@@ -13,7 +13,7 @@ router.get('/', getTweets)
 router.post('/', validarJWT, createTweet)
 
 // Eliminar Tweet
-router.delete('/', validarJWT, deleteTweet)
+router.delete('/:id', validarJWT, deleteTweet)
 
 // Likes
 router.put('/like', validarJWT, addLike)

@@ -110,7 +110,7 @@ const createTweet = async( req, res = express.response ) => {
 }
 
 const deleteTweet = async( req, res = express.response ) => {
-    const tweetID = req.body.tweetID
+    const tweetID = req.params.id
 
     try {
         const tweet = await Tweet.findById( tweetID );

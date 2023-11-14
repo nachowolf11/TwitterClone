@@ -9,7 +9,7 @@ const app = express();
 dbConnection();
 
 //CORS
-app.use(cors());
+app.use(cors({ origin: 'https://twitterclone-dev-djxf.2.us-1.fl0.io' }));
 
 //Directorio Publico
 app.use( express.static('public') );
